@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="LOG_PATH_HOME" value="/home/logs/btr-zd-publish"/>
+    <property name="LOG_LEVEL" value="Info"/>
+
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH_HOME}/sys.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36}\(%L\) - [%X{traceId}] %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_PATH_HOME}/sys.%d{yyyy-MM-dd}.log</FileNamePattern>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36}\(%L\) - [%X{traceId}] %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CatAppender" class="com.dianping.cat.logback.CatLogbackAppender"/>
+
+    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="Info"/>
+    <logger name="org.springframework" level="Info"/>
+    <logger name="com.baturu" level="${LOG_LEVEL}"/>
+    <root level="${LOG_LEVEL}">
+        <appender-ref ref="file"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="CatAppender" />
+    </root>
+
+    <appender name="trace_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH_HOME}/btr-zd-service-trace.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36}\(%L\) - [%X{traceId}] %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_PATH_HOME}/btr-zd-service-trace.%d{yyyy-MM-dd}.log</FileNamePattern>
+        </rollingPolicy>
+    </appender>
+
+    <logger name="traceLogger" level="${LOG_LEVEL}">
+        <appender-ref ref="trace_file"/>
+    </logger>
+</configuration>

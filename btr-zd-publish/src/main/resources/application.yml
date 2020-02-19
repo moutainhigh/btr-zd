@@ -1,0 +1,136 @@
+spring:
+  application:
+    name: btr-zd-publish
+  # 控制使用哪个环境 test, test2, test10, test30, test31, test32 其中 test10 是 dockertest, test30/31/32就是对应docker30/31/32
+  profiles:
+    active: test36
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    property-naming-strategy: LOWER_CAMEL_CASE
+    default-property-inclusion: non_null
+
+
+
+druid:
+  # 初始化时建立物理连接的个数
+  initialSize: 3
+  # 最小连接池数量
+  minIdle: 3
+  # 最大连接池数量
+  maxActive: 20
+  # 获取连接时最大等待时间，单位毫秒
+  maxWait: 60000
+  # Destroy线程检测连接的间隔时间
+  timeBetweenEvictionRunsMillis: 60000
+  # 连接保持空闲而不被驱逐的最长时间
+  minEvictableIdleTimeMillis: 300000
+  # 用来检测连接是否有效的sql
+  validationQuery: SELECT 'x'
+  # 执行validationQuery检测连接是否有效
+  testWhileIdle: true
+  # 申请连接时执行validationQuery检测连接是否有效
+  testOnBorrow: false
+  # 归还连接时执行validationQuery检测连接是否有效
+  testOnReturn: false
+  # 提示Druid数据源需要对数据库密码进行解密
+  filters: config
+
+
+
+# mybatis plus
+mybatis-plus:
+  # mapper-locations: classpath*:/mapper/**Mapper.xml
+  # 实体扫描，多个package用逗号或者分号分隔
+  type-aliases-package: com.baturu.zd.entity
+  global-config:
+    db-config:
+      #逻辑删除配置
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      #主键类型  AUTO:"数据库ID自增", INPUT:"用户输入ID",ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
+      id-type: auto
+      # 表名、字段名、是否使用下划线命名
+      table-underline: true
+  # 原生配置
+  configuration:
+    # 配置返回数据库(column下划线命名&&返回java实体是驼峰命名)，自动匹配无需as（没开启这个，SQL需要写as： select user_id as userId）
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+
+
+
+# Dubbo 配置, com.alibaba.dubbo.config.AbstractConfig
+dubbo:
+  #  ## ApplicationConfig Bean
+  application:
+    id: btr-zd-publish
+    name: btr-zd-publish
+    owner: CaoJun
+  #  ## ProtocolConfig Bean
+  protocol:
+    id: dubbo
+    name: dubbo
+    status: server
+    port: 20881
+  #  ## RegistryConfig Bean
+  registry:
+    id: registryConfig
+    port: 2181
+  #  ## 提供者相关配置
+  provider:
+    filter: DubboCatFilter,default,guardianPigeonFilter
+    loadbalance: roundrobin
+    version: 1.0.0
+  scan:
+    basePackages: com.baturu.zd.service
+  ## 消费者相关配置
+  consumer:
+    filter: DubboCatFilter,default,guardianPigeonFilter
+    loadbalance: roundrobin
+    version: 1.0.0
+
+# Kafka 通用配置
+kafka:
+  consumer:
+    rebalanceMaxRetries: 11
+    zookeeperSessionTimeout: 10000
+    zookeeperConnectionTimeout: 10000
+    zookeeperSyncTime: 1000
+    #auto.commit.enable如果设为true，consumer会定时向ZooKeeper发送已经获取到的消息的offset。
+    #当consumer进程挂掉时，已经提交的offset可以继续使用，让新的consumer继续工作
+    #如果为false，会重复读取挂掉的consumer已经读取过的消息
+    autoCommitEnable: true
+    #    consumer向ZooKeeper发送offset的时间间隔
+    autoCommitInterval: 1000
+  producer:
+    #消息发送的模式，同步或异步，异步的时候消息将会在本地buffer，并适时批量发送
+    producerType: sync
+    requestRequiredAcks: 0
+    serializerClass: kafka.serializer.StringEncoder
+
+
+# 开启暴露的节点
+management:
+  endpoint:
+    env:
+      enabled: true
+    loggers:
+      enabled: true
+
+#wxa40424e7a4ab99eb
+#54300e02b8a4608d27f3b9330107a9c1
+zd:
+  weChat:
+    appId: wx1b49fdfbbad45465
+    appSecret: ffe57cd653184cfe41250ee8ce698f2b
+    userInfoUrl: https://api.weixin.qq.com/sns/userinfo?lang=zh_CN
+    openIdUrl: https://api.weixin.qq.com/sns/oauth2/access_token?grant_type=authorization_code
+    addKeyWordUrl: https://restapi.amap.com/v3/assistant/inputtips?output=json&key=476103948a6aa6ce3a16d95737be4e12&keywords=
+    getTownShipUrl: http://restapi.amap.com/v3/geocode/regeo?key=476103948a6aa6ce3a16d95737be4e12&poitype=&radius=1000&extensions=base&batch=false&roadlevel=0&location=
+  app:
+    # 时间单位：秒
+    liveTime: 86400
+  picture:
+    serverUrl: http://test-pic.qipeipu.net/uploadpic/
+    serverBaseUrl: /home/datas/uploadpic/

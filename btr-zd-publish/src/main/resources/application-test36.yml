@@ -1,0 +1,73 @@
+# test33 注册中心、队列配置
+spring:
+  application:
+    name: zd-publish-test36
+#  data:
+#    mongodb:
+#      uri: mongodb://ofcser_ofc_rw:swhqEGie0fw3ivgbz[ba@172.16.8.3:27017,172.16.8.3:27018,172.16.8.3:27019/ofc
+server:
+  port: 8080
+
+# druid datasource config
+druid:
+  driverClass: com.mysql.jdbc.Driver
+  url: jdbc:mysql://dev-mysql-logistics-master.btr:3316/zd?useSSL=false&useUnicode=true&characterEncoding=utf8&ApplicationName=btr-zd-publish-dev
+  username: dev_main
+  # 加密后的密码
+  password: CP6V2BLXgFijIBOul9yVHX2jITMcDGjYIWe4Z2tzMPEUYIU3tmE5y8QdjiFPq+sSpAjqE1gHQ81VPeETvGVveQ==
+  properties:
+    config.decrypt: true
+    config.decrypt.key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIW1g7NcnhH3ouqmmMJHrkQNI8oKckHFZWfB48pmb8URnnKuuofSqNNlNWiW6b6Um1eXn+hgfhwYtE2Oq4OxNYcCAwEAAQ==
+  # druid slave datasource config
+  slave:
+    slaveUrl: jdbc:mysql://dev-mysql-logistics-master.btr:3316/zd?useSSL=false&useUnicode=true&characterEncoding=utf8&ApplicationName=btr-zd-publish-dev
+    slaveUsername: dev_main
+    # 加密后的密码
+    slavePassword: CP6V2BLXgFijIBOul9yVHX2jITMcDGjYIWe4Z2tzMPEUYIU3tmE5y8QdjiFPq+sSpAjqE1gHQ81VPeETvGVveQ==
+    slaveProperties:
+      config.decrypt: true
+      config.decrypt.key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIW1g7NcnhH3ouqmmMJHrkQNI8oKckHFZWfB48pmb8URnnKuuofSqNNlNWiW6b6Um1eXn+hgfhwYtE2Oq4OxNYcCAwEAAQ==
+
+redis:
+  hostname:  redis-service
+  port: 6379
+  password:
+  sentinelModel: true
+  pool:
+    maxTotal: 100
+    maxIdle: 20
+    maxWait: 5000
+  sentinel:
+    master: master-1
+    nodes: redis-service:26379,redis-service2:26379,redis-service3:26379
+
+kafka:
+  consumer:
+    groupId: btr-zd-publish-test36
+    serverIpAndPortList: kafka-0.kafka-svc.docker36.svc.cluster.local:9092,kafka-1.kafka-svc.docker36.svc.cluster.local:9092,kafka-2.kafka-svc.docker36.svc.cluster.local:9092
+    zookeeperIpAndPortList: zk-0.zk-hs.docker36.svc.cluster.local:2181,zk-1.zk-hs.docker36.svc.cluster.local:2181,zk-2.zk-hs.docker36.svc.cluster.local:2181
+  producer:
+    serverIpAndPortList: kafka-0.kafka-svc.docker36.svc.cluster.local:9092,kafka-1.kafka-svc.docker36.svc.cluster.local:9092,kafka-2.kafka-svc.docker36.svc.cluster.local:9092
+    request-required-acks: 1
+
+dubbo:
+  registry:
+    address: zookeeper://zk-0.zk-hs.docker36.svc.cluster.local:2181
+
+# 日志输出，如sql,本地调试用
+logging:
+  stdout:
+    enabled: true
+  level:
+    com.baturu.zd.mapper: DEBUG
+
+# xxl-job配置
+xxl:
+  job:
+    admin:
+      addresses: https://docker36-xxl-job.qipeipu.net/
+    executor:
+      appname: btr-zd-test
+      ip:
+      port: 9999
+      logpath: /home/logs/xxl-job/

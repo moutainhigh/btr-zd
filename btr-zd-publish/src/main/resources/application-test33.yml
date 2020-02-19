@@ -1,0 +1,63 @@
+# test33 注册中心、队列配置
+spring:
+  application:
+    name: zd-publish-test33
+#  data:
+#    mongodb:
+#      uri: mongodb://ofcser_ofc_rw:swhqEGie0fw3ivgbz[ba@172.16.8.3:27017,172.16.8.3:27018,172.16.8.3:27019/ofc
+server:
+  port: 8080
+
+# druid datasource config
+druid:
+  driverClass: com.mysql.jdbc.Driver
+  url: jdbc:mysql://192.168.16.174:3306/zd?useSSL=false&useUnicode=true&characterEncoding=utf8&ApplicationName=zd-service&zeroDateTimeBehavior=convertToNull
+  username: zd
+  # 加密后的密码
+  password: zd@123456A
+#  properties:
+#    config.decrypt: true
+#    config.decrypt.key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAL+lEjpcEjlpZt5aFXNu6dE6RcJ6t+pkGtGBBCite11vnYuBXkPZj6dliEziQrnGkWHR23tROm5gVN6OVrGYgOECAwEAAQ==
+  # druid slave datasource config
+  slave:
+    slaveUrl: jdbc:mysql://localhost:3306/zd?useSSL=false&useUnicode=true&characterEncoding=utf8&ApplicationName=zd-service&zeroDateTimeBehavior=convertToNull
+    slaveUsername: root
+    # 加密后的密码
+    slavePassword: root
+#    slaveProperties:
+#      config.decrypt: true
+#      config.decrypt.key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAL+lEjpcEjlpZt5aFXNu6dE6RcJ6t+pkGtGBBCite11vnYuBXkPZj6dliEziQrnGkWHR23tROm5gVN6OVrGYgOECAwEAAQ==
+
+redis:
+  hostname: 172.16.16.148
+  port: 6379
+  password:
+  sentinelModel: false
+  pool:
+    maxTotal: 100
+    maxIdle: 20
+    maxWait: 5000
+  sentinel:
+    master: master-1
+    nodes: 192.168.0.237:26379,192.168.0.240:26380,192.168.0.246:26381
+
+
+
+#kafka:
+#  consumer:
+#    groupId: zd-service-test33
+#    serverIpAndPortList: 172.16.16.125:9092
+#    zookeeperIpAndPortList: 172.16.17.53:2181
+#  producer:
+#    serverIpAndPortList: 172.16.16.125:9092
+
+dubbo:
+  registry:
+    address: zookeeper://172.16.17.53:2181
+
+# 日志输出，如sql,本地调试用
+logging:
+  stdout:
+    enabled: true
+  level:
+    com.baturu.zd.mapper: DEBUG
